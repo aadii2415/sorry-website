@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>I'm Sorry ❤️</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Dancing+Script&family=Poppins:wght@300&display=swap" rel="stylesheet">
+
+<style>
+body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: radial-gradient(circle at top, #ffe6f0, #f3e6ff);
+    overflow-x: hidden;
+    color: #444;
+}
+
+/* Progress bar */
+#progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 5px;
+  background: pink;
+  width: 0%;
+  z-index: 1000;
+}
+
+/* Floating hearts */
+.heart {
+    position: fixed;
+    bottom: -10px;
+    font-size: 20px;
+    animation: float 6s linear infinite;
+    color: rgba(255, 105, 180, 0.6);
+}
+
+@keyframes float {
+    0% { transform: translateY(0); opacity: 1; }
+    100% { transform: translateY(-100vh); opacity: 0; }
+}
+
+section {
+    min-height: 100vh;
+    padding: 40px;
+    text-align: center;
+}
+
+h1 {
+    font-family: 'Dancing Script', cursive;
+    font-size: 60px;
+}
+
+button {
+    padding: 12px 25px;
+    border: none;
+    background: #ff99cc;
+    color: white;
+    border-radius: 25px;
+    cursor: pointer;
+    margin: 10px;
+}
+
+/* Fade */
+.fade {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: 1s;
+}
+.fade.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Gallery */
+.gallery img {
+    width: 200px;
+    border-radius: 15px;
+    margin: 10px;
+    box-shadow: 0 0 10px pink;
+}
+
+/* Heartbeat */
+.heartbeat {
+    animation: beat 1s infinite;
+}
+@keyframes beat {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+/* Input */
+input, textarea {
+  padding: 10px;
+  width: 80%;
+  margin: 10px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+}
+</style>
+</head>
+
+<body>
+
+<div id="progress"></div>
+
+<!-- Floating hearts -->
+<script>
+setInterval(() => {
+    if (document.querySelectorAll('.heart').length < 20) {
+        let heart = document.createElement("div");
+        heart.className = "heart";
+        heart.innerHTML = "❤️";
+        heart.style.left = Math.random() * 100 + "vw";
+        document.body.appendChild(heart);
+        setTimeout(() => heart.remove(), 6000);
+    }
+}, 700);
+</script>
+
+<!-- Landing -->
+<section>
+    <h1>I'm Sorry ❤️</h1>
+    <p>I never want to hurt you again</p>
+    <button onclick="scrollToSection('message')">Please hear me out</button>
+</section>
+
+<!-- Typing -->
+<section id="message" class="fade">
+    <h2>My Heart</h2>
+    <p id="typing"></p>
+</section>
+
+<!-- Memories -->
+<section class="fade">
+    <h2>Our Moments</h2>
+    <div class="gallery">
+        <img src="your-photo1.jpg">
+        <img src="your-photo2.jpg">
+        <img src="your-photo3.jpg">
+    </div>
+</section>
+
+<!-- Feelings -->
+<section class="fade">
+    <h2 class="heartbeat">What I Feel ❤️</h2>
+    <p>I miss you</p>
+    <p>I regret hurting you</p>
+</section>
+
+<!-- Interaction -->
+<section class="fade">
+    <h2>Will you forgive me? ❤️</h2>
+    <button onclick="forgive()">Yes ❤️</button>
+    <button onmouseover="moveButton(this)">No 😢</button>
+</section>
+
+<!-- Message from her -->
+<section class="fade">
+    <h2>Say Something to Me 💌</h2>
+    <textarea id="reply" placeholder="Your message..."></textarea><br>
+    <button onclick="sendReply()">Send</button>
+    <p id="responseMsg"></p>
+</section>
+
+<audio autoplay loop hidden>
+    <source src="your-song.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+// Typing effect
+const text = "I know I made mistakes... but I truly love you and want to fix everything.";
+let i = 0;
+function type() {
+  if (i < text.length) {
+    document.getElementById("typing").innerHTML += text.charAt(i);
+    i++;
+    setTimeout(type, 40);
+  }
+}
+type();
+
+// Scroll
+function scrollToSection(id) {
+    document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+}
+
+// Progress bar
+window.onscroll = () => {
+  let scrolled = (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100;
+  document.getElementById("progress").style.width = scrolled + "%";
+};
+
+// Intersection observer
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('show');
+    }
+  });
+});
+document.querySelectorAll('.fade').forEach(el => observer.observe(el));
+
+// Buttons
+function moveButton(btn) {
+    btn.style.position = "absolute";
+    btn.style.top = Math.random() * window.innerHeight + "px";
+    btn.style.left = Math.random() * window.innerWidth + "px";
+}
+
+function forgive() {
+    alert("I promise I'll make everything better ❤️");
+}
+
+// Send reply to backend
+async function sendReply() {
+    const msg = document.getElementById("reply").value;
+
+    const res = await fetch("/reply", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: msg })
+    });
+
+    const data = await res.json();
+    document.getElementById("responseMsg").innerText = data.status;
+}
+</script>
+
+</body>
+</html>

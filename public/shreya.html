@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>I'm Sorry ❤️</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;500&display=swap" rel="stylesheet">
+
+<style>
+body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: radial-gradient(circle at top, #ffe6f0, #f3e6ff);
+    color: #444;
+    overflow-x: hidden;
+}
+
+/* Header */
+h1 {
+    font-family: 'Great Vibes', cursive;
+    font-size: 80px;
+    color: #ff4da6;
+    margin-top: 50px;
+}
+
+/* Sections */
+section {
+    min-height: 100vh;
+    padding: 50px 20px;
+    text-align: center;
+}
+
+/* Text */
+p {
+    font-size: 20px;
+    line-height: 1.8;
+    max-width: 700px;
+    margin: auto;
+}
+
+/* Buttons */
+button {
+    padding: 14px 30px;
+    font-size: 18px;
+    border: none;
+    background: linear-gradient(45deg, #ff66b2, #ff99cc);
+    color: white;
+    border-radius: 30px;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: 0.3s;
+}
+button:hover {
+    transform: scale(1.1);
+}
+
+/* Floating hearts */
+.heart {
+    position: fixed;
+    bottom: -10px;
+    font-size: 20px;
+    animation: float 6s linear infinite;
+    color: rgba(255, 105, 180, 0.6);
+}
+@keyframes float {
+    0% { transform: translateY(0); opacity: 1; }
+    100% { transform: translateY(-100vh); opacity: 0; }
+}
+
+/* Fade animation */
+.fade {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: 1s;
+}
+.fade.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Input */
+textarea {
+    width: 80%;
+    height: 100px;
+    border-radius: 15px;
+    padding: 15px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+}
+
+/* Heartbeat */
+.heartbeat {
+    animation: beat 1s infinite;
+}
+@keyframes beat {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+}
+</style>
+</head>
+
+<body>
+
+<!-- Floating hearts -->
+<script>
+setInterval(() => {
+    if (document.querySelectorAll('.heart').length < 25) {
+        let heart = document.createElement("div");
+        heart.className = "heart";
+        heart.innerHTML = "❤️";
+        heart.style.left = Math.random() * 100 + "vw";
+        document.body.appendChild(heart);
+        setTimeout(() => heart.remove(), 6000);
+    }
+}, 700);
+</script>
+
+<!-- Landing -->
+<section>
+    <h1>I'm Sorry ❤️</h1>
+    <p>I never want to hurt you again… please hear me out</p>
+    <button onclick="scrollToSection('message')">Start 💖</button>
+</section>
+
+<!-- Message -->
+<section id="message" class="fade">
+    <h2>My Heart</h2>
+    <p id="typing"></p>
+</section>
+
+<!-- Feelings -->
+<section class="fade">
+    <h2 class="heartbeat">What I Feel ❤️</h2>
+    <p>I miss you more than anything</p>
+    <p>I regret everything that hurt you</p>
+    <p>I just want one chance to make it right</p>
+</section>
+
+<!-- Interaction -->
+<section class="fade">
+    <h2>Will you forgive me? 💔➡️❤️</h2>
+    <button onclick="forgive()">Yes ❤️</button>
+    <button onmouseover="moveButton(this)">No 😢</button>
+</section>
+
+<!-- Reply -->
+<section class="fade">
+    <h2>Say Something to Me 💌</h2>
+    <textarea id="reply" placeholder="Write your message..."></textarea><br>
+    <button onclick="sendReply()">Send</button>
+    <p id="responseMsg"></p>
+</section>
+
+<audio autoplay loop hidden>
+    <source src="your-song.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+// Typing effect
+const text = "I know I made mistakes… but losing you is the one thing I can’t accept. I truly want to fix everything and be better for you.";
+let i = 0;
+function type() {
+  if (i < text.length) {
+    document.getElementById("typing").innerHTML += text.charAt(i);
+    i++;
+    setTimeout(type, 35);
+  }
+}
+type();
+
+// Scroll
+function scrollToSection(id) {
+    document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+}
+
+// Fade animation
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('show');
+    }
+  });
+});
+document.querySelectorAll('.fade').forEach(el => observer.observe(el));
+
+// Button logic
+function moveButton(btn) {
+    btn.style.position = "absolute";
+    btn.style.top = Math.random() * window.innerHeight + "px";
+    btn.style.left = Math.random() * window.innerWidth + "px";
+}
+
+function forgive() {
+    alert("I promise I’ll make everything better ❤️");
+}
+
+// Send reply
+async function sendReply() {
+    const msg = document.getElementById("reply").value;
+
+    const res = await fetch("/reply", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: msg })
+    });
+
+    const data = await res.json();
+    document.getElementById("responseMsg").innerText = data.status;
+}
+</script>
+
+</body>
+</html>
