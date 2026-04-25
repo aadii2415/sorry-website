@@ -16,10 +16,21 @@ body {
     overflow-x: hidden;
 }
 
+/* 🌸 BIG LILY BACKGROUND */
+body::before {
+    content: "";
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background: url("lily.jpg") center/cover no-repeat;
+    opacity: 0.15;
+    z-index: -1;
+}
+
 /* Header */
 h1 {
     font-family: 'Great Vibes', cursive;
-    font-size: 80px;
+    font-size: 70px;
     color: #ff4da6;
     margin-top: 50px;
 }
@@ -35,7 +46,7 @@ section {
 p {
     font-size: 20px;
     line-height: 1.8;
-    max-width: 700px;
+    max-width: 750px;
     margin: auto;
 }
 
@@ -55,13 +66,12 @@ button:hover {
     transform: scale(1.1);
 }
 
-/* Floating hearts */
-.heart {
+/* Floating hearts + lilies */
+.floating {
     position: fixed;
     bottom: -10px;
-    font-size: 20px;
+    font-size: 22px;
     animation: float 6s linear infinite;
-    color: rgba(255, 105, 180, 0.6);
 }
 @keyframes float {
     0% { transform: translateY(0); opacity: 1; }
@@ -79,16 +89,6 @@ button:hover {
     transform: translateY(0);
 }
 
-/* Input */
-textarea {
-    width: 80%;
-    height: 100px;
-    border-radius: 15px;
-    padding: 15px;
-    font-size: 16px;
-    border: 1px solid #ccc;
-}
-
 /* Heartbeat */
 .heartbeat {
     animation: beat 1s infinite;
@@ -97,29 +97,91 @@ textarea {
     0%, 100% { transform: scale(1); }
     50% { transform: scale(1.15); }
 }
+
+/* Gallery */
+.gallery {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* Image box */
+.img-box {
+    margin: 15px;
+    text-align: center;
+}
+
+/* Image */
+.img-box img {
+    width: 220px;
+    border-radius: 20px;
+    transition: 0.3s;
+}
+
+/* Hover effect */
+.img-box img:hover {
+    transform: scale(1.05);
+    box-shadow: 0 10px 25px rgba(255, 105, 180, 0.3);
+}
+
+/* Caption BELOW image */
+.caption {
+    margin-top: 10px;
+    font-size: 15px;
+    color: #555;
+    opacity: 0;
+    transition: 0.3s;
+}
+
+/* Show caption */
+.img-box:hover .caption {
+    opacity: 1;
+}
+
+/* Input */
+textarea {
+    width: 80%;
+    height: 100px;
+    border-radius: 15px;
+    padding: 15px;
+    font-size: 16px;
+}
 </style>
 </head>
 
 <body>
 
-<!-- Floating hearts -->
+<!-- 🎵 MUSIC (ADDED ONLY THIS PART) -->
+<audio id="bg-music" loop>
+    <source src="song.mp3" type="audio/mpeg">
+</audio>
+
+<!-- Floating Hearts + Lilies -->
 <script>
 setInterval(() => {
-    if (document.querySelectorAll('.heart').length < 25) {
-        let heart = document.createElement("div");
-        heart.className = "heart";
-        heart.innerHTML = "❤️";
-        heart.style.left = Math.random() * 100 + "vw";
-        document.body.appendChild(heart);
-        setTimeout(() => heart.remove(), 6000);
+    if (document.querySelectorAll('.floating').length < 30) {
+        let el = document.createElement("div");
+        el.className = "floating";
+
+        el.innerHTML = Math.random() > 0.3 ? "🌸" : "❤️";
+
+        el.style.left = Math.random() * 100 + "vw";
+        el.style.fontSize = (18 + Math.random() * 10) + "px";
+
+        document.body.appendChild(el);
+
+        setTimeout(() => el.remove(), 6000);
     }
 }, 700);
 </script>
 
 <!-- Landing -->
 <section>
-    <h1>I'm Sorry ❤️</h1>
-    <p>I never want to hurt you again… please hear me out</p>
+    <h1>I'm Sorry, Shreya ❤️</h1>
+    <p>
+        Out of all the things in my life, hurting you is the one thing I wish I could undo.<br><br>
+        If your heart allows, please hear me out… because you mean more to me than words can say.
+    </p>
     <button onclick="scrollToSection('message')">Start 💖</button>
 </section>
 
@@ -129,12 +191,39 @@ setInterval(() => {
     <p id="typing"></p>
 </section>
 
+<!-- Memories -->
+<section class="fade">
+    <h2>Our Memories 📸</h2>
+
+    <div class="gallery">
+
+        <div class="img-box">
+            <img src="memory1.jpg">
+            <p class="caption">This moment still makes me smile ❤️</p>
+        </div>
+
+        <div class="img-box">
+            <img src="memory2.jpg">
+            <p class="caption">One of my favorite memories with you 🌸</p>
+        </div>
+
+        <div class="img-box">
+            <img src="memory3.jpg">
+            <p class="caption">I wish I could relive this day again 💖</p>
+        </div>
+
+    </div>
+</section>
+
 <!-- Feelings -->
 <section class="fade">
-    <h2 class="heartbeat">What I Feel ❤️</h2>
-    <p>I miss you more than anything</p>
-    <p>I regret everything that hurt you</p>
-    <p>I just want one chance to make it right</p>
+    <h2 class="heartbeat">What I Feel ❤️🌸</h2>
+    <p>
+        Shreya… your absence is something I feel in every quiet moment.<br><br>
+        I regret the pain I caused you more than I can put into words.<br><br>
+        If I get one chance, I won’t just fix things—  
+        I’ll make sure you never feel that hurt again.
+    </p>
 </section>
 
 <!-- Interaction -->
@@ -152,13 +241,13 @@ setInterval(() => {
     <p id="responseMsg"></p>
 </section>
 
-<audio autoplay loop hidden>
-    <source src="your-song.mp3" type="audio/mpeg">
-</audio>
-
 <script>
 // Typing effect
-const text = "I know I made mistakes… but losing you is the one thing I can’t accept. I truly want to fix everything and be better for you.";
+const text = `Shreya… I know I made mistakes, and I regret them more than I can explain.  
+But the idea of a life without you feels empty.  
+I don’t just want forgiveness—I want a chance  
+to rebuild everything and become better for you.`;
+
 let i = 0;
 function type() {
   if (i < text.length) {
@@ -169,9 +258,14 @@ function type() {
 }
 type();
 
-// Scroll
+// Scroll + 🎵 MUSIC PLAY (ONLY ADDITION)
 function scrollToSection(id) {
     document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+
+    const music = document.getElementById("bg-music");
+    if (music.paused) {
+        music.play();
+    }
 }
 
 // Fade animation

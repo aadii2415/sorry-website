@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/aadii2415/sorry-website#readme",
   "dependencies": {
+    "body-parser": "^2.2.2",
     "express": "^5.2.1"
   }
 }
