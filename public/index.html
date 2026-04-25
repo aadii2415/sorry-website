@@ -146,30 +146,49 @@ textarea {
     padding: 15px;
     font-size: 16px;
 }
+
+/* 💖 MINI GAME */
+#gameArea {
+    position: relative;
+    width: 100%;
+    height: 400px;
+    border: 2px dashed pink;
+    overflow: hidden;
+    margin-top: 20px;
+    border-radius: 20px;
+}
+
+.heart {
+    position: absolute;
+    font-size: 30px;
+    cursor: pointer;
+    animation: fall linear;
+}
+
+@keyframes fall {
+    from { top: -50px; }
+    to { top: 100%; }
+}
 </style>
 </head>
 
 <body>
 
-<!-- 🎵 MUSIC (ADDED ONLY THIS PART) -->
+<!-- 🎵 MUSIC -->
 <audio id="bg-music" loop>
     <source src="song.mp3" type="audio/mpeg">
 </audio>
 
-<!-- Floating Hearts + Lilies -->
+<!-- Floating Hearts -->
 <script>
 setInterval(() => {
     if (document.querySelectorAll('.floating').length < 30) {
         let el = document.createElement("div");
         el.className = "floating";
-
         el.innerHTML = Math.random() > 0.3 ? "🌸" : "❤️";
-
         el.style.left = Math.random() * 100 + "vw";
         el.style.fontSize = (18 + Math.random() * 10) + "px";
-
         document.body.appendChild(el);
-
         setTimeout(() => el.remove(), 6000);
     }
 }, 700);
@@ -178,10 +197,8 @@ setInterval(() => {
 <!-- Landing -->
 <section>
     <h1>I'm Sorry, Shreya ❤️</h1>
-    <p>
-        Out of all the things in my life, hurting you is the one thing I wish I could undo.<br><br>
-        If your heart allows, please hear me out… because you mean more to me than words can say.
-    </p>
+    <p>Out of all the things in my life, hurting you is the one thing I wish I could undo.<br><br>
+    If your heart allows, please hear me out…</p>
     <button onclick="scrollToSection('message')">Start 💖</button>
 </section>
 
@@ -194,36 +211,35 @@ setInterval(() => {
 <!-- Memories -->
 <section class="fade">
     <h2>Our Memories 📸</h2>
-
     <div class="gallery">
-
         <div class="img-box">
             <img src="memory1.jpg">
             <p class="caption">This moment still makes me smile ❤️</p>
         </div>
-
         <div class="img-box">
             <img src="memory2.jpg">
-            <p class="caption">One of my favorite memories with you 🌸</p>
+            <p class="caption">One of my favorite memories 🌸</p>
         </div>
-
         <div class="img-box">
             <img src="memory3.jpg">
-            <p class="caption">I wish I could relive this day again 💖</p>
+            <p class="caption">I wish I could relive this 💖</p>
         </div>
-
     </div>
 </section>
 
 <!-- Feelings -->
 <section class="fade">
-    <h2 class="heartbeat">What I Feel ❤️🌸</h2>
-    <p>
-        Shreya… your absence is something I feel in every quiet moment.<br><br>
-        I regret the pain I caused you more than I can put into words.<br><br>
-        If I get one chance, I won’t just fix things—  
-        I’ll make sure you never feel that hurt again.
-    </p>
+    <h2 class="heartbeat">What I Feel ❤️</h2>
+    <p>Shreya… your absence hurts deeply...</p>
+</section>
+
+<!-- 💖 MINI GAME -->
+<section class="fade">
+    <h2>Catch My Love 💖</h2>
+    <p>Click the hearts before they disappear!</p>
+    <h3>Score: <span id="score">0</span></h3>
+    <div id="gameArea"></div>
+    <button onclick="startGame()">Start Game 🎮</button>
 </section>
 
 <!-- Interaction -->
@@ -235,50 +251,41 @@ setInterval(() => {
 
 <!-- Reply -->
 <section class="fade">
-    <h2>Say Something to Me 💌</h2>
-    <textarea id="reply" placeholder="Write your message..."></textarea><br>
+    <h2>Say Something 💌</h2>
+    <textarea id="reply"></textarea><br>
     <button onclick="sendReply()">Send</button>
     <p id="responseMsg"></p>
 </section>
 
 <script>
-// Typing effect
-const text = `Shreya… I know I made mistakes, and I regret them more than I can explain.  
-But the idea of a life without you feels empty.  
-I don’t just want forgiveness—I want a chance  
-to rebuild everything and become better for you.`;
-
+// Typing
+const text = "I’m really sorry...";
 let i = 0;
 function type() {
   if (i < text.length) {
     document.getElementById("typing").innerHTML += text.charAt(i);
     i++;
-    setTimeout(type, 35);
+    setTimeout(type, 40);
   }
 }
 type();
 
-// Scroll + 🎵 MUSIC PLAY (ONLY ADDITION)
+// 🎵 Music
 function scrollToSection(id) {
     document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
-
     const music = document.getElementById("bg-music");
-    if (music.paused) {
-        music.play();
-    }
+    if (music.paused) music.play();
 }
 
-// Fade animation
+// Fade
 const observer = new IntersectionObserver(entries => {
   entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.classList.add('show');
-    }
+    if (entry.isIntersecting) entry.target.classList.add('show');
   });
 });
 document.querySelectorAll('.fade').forEach(el => observer.observe(el));
 
-// Button logic
+// Buttons
 function moveButton(btn) {
     btn.style.position = "absolute";
     btn.style.top = Math.random() * window.innerHeight + "px";
@@ -286,21 +293,53 @@ function moveButton(btn) {
 }
 
 function forgive() {
-    alert("I promise I’ll make everything better ❤️");
+    alert("I promise ❤️");
 }
 
-// Send reply
+// Reply
 async function sendReply() {
     const msg = document.getElementById("reply").value;
-
     const res = await fetch("/reply", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message: msg })
     });
-
     const data = await res.json();
     document.getElementById("responseMsg").innerText = data.status;
+}
+
+// 🎮 GAME
+let score = 0, gameInterval;
+
+function startGame() {
+    score = 0;
+    document.getElementById("score").innerText = score;
+    document.getElementById("gameArea").innerHTML = "";
+
+    gameInterval = setInterval(createHeart, 800);
+
+    setTimeout(() => {
+        clearInterval(gameInterval);
+        alert("Game Over 💔 Score: " + score);
+    }, 20000);
+}
+
+function createHeart() {
+    const heart = document.createElement("div");
+    heart.classList.add("heart");
+    heart.innerHTML = Math.random() > 0.8 ? "💔" : "💖";
+    heart.style.left = Math.random() * 90 + "%";
+    heart.style.animationDuration = (3 + Math.random() * 2) + "s";
+
+    heart.onclick = () => {
+        score += heart.innerHTML === "💔" ? -2 : 1;
+        document.getElementById("score").innerText = score;
+        heart.remove();
+    };
+
+    document.getElementById("gameArea").appendChild(heart);
+
+    setTimeout(() => heart.remove(), 5000);
 }
 </script>
 
